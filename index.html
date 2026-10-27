@@ -90,6 +90,7 @@
     text-align: center;
     padding: clamp(36px, 8vw, 64px) var(--pad-x) clamp(24px, 5vw, 40px);
     background: linear-gradient(180deg, #fff8ec 0%, var(--bg) 100%);
+    scroll-margin-top: 80px;
   }
 
   .hero h1 {
@@ -340,6 +341,7 @@
     border-top: 1px solid rgba(0, 0, 0, 0.06);
     color: var(--muted);
     font-size: clamp(0.82rem, 2.3vw, 0.9rem);
+    scroll-margin-top: 80px;
   }
 
   footer strong { color: var(--accent); }
@@ -461,17 +463,17 @@
   }
 </style>
 </head>
-<body>
+<body id="topo">
 <header>
   <div class="logo"><span>👜</span> Bella Bolsas</div>
   <nav>
-    <a href="#catalogo">Catálogo</a>
+    <a href="#topo" id="nav-catalogo">Catálogo</a>
     <a href="#sobre">Sobre</a>
     <a href="#contato">Contato</a>
   </nav>
 </header>
 
-<section class="hero">
+<section class="hero" id="catalogo">
   <h1>Coleção <em>Exclusiva</em> de Bolsas</h1>
   <p>Peças selecionadas com acabamento premium. Encontre o modelo perfeito para cada ocasião.</p>
 </section>
@@ -479,7 +481,6 @@
 <div class="filters" id="filters">
   <button class="active" data-filter="all">Todas</button>
   <button data-filter="bolsa">Bolsas</button>
-  <button data-filter="carteira">Carteiras</button>
   <button data-filter="mochila">Mochilas</button>
 </div>
 
@@ -501,25 +502,25 @@
 
 <script>
   const products = [
-    { file: "01.jpeg", name: "Bolsa Elegance", desc: "Couro sintético premium", price: "R$ 189,90", tag: "bolsa", badge: "Novo" },
-    { file: "02.jpeg", name: "Bolsa Clássica", desc: "Acabamento fosco", price: "R$ 159,90", tag: "bolsa" },
-    { file: "03.jpeg", name: "Bolsa Casual", desc: "Alça ajustável", price: "R$ 149,90", tag: "bolsa" },
-    { file: "04.png",  name: "Carteira Slim", desc: "Compacta e sofisticada", price: "R$ 79,90", tag: "carteira", badge: "Promoção" },
-    { file: "05.jpeg", name: "Bolsa Tote", desc: "Ampla e espaçosa", price: "R$ 219,90", tag: "bolsa" },
-    { file: "06.jpeg", name: "Bolsa Tiracolo", desc: "Alça longa ajustável", price: "R$ 179,90", tag: "bolsa" },
-    { file: "07.jpeg", name: "Bolsa Estruturada", desc: "Formato rígido elegante", price: "R$ 239,90", tag: "bolsa" },
-    { file: "08.jpeg", name: "Bolsa Mini", desc: "Perfeita para festas", price: "R$ 129,90", tag: "bolsa" },
-    { file: "09.jpeg", name: "Bolsa Shopper", desc: "Ideal para o dia a dia", price: "R$ 199,90", tag: "bolsa" },
-    { file: "10.jpeg", name: "Bolsa Clutch", desc: "Elegância nas mãos", price: "R$ 139,90", tag: "bolsa" },
-    { file: "11.png",  name: "Carteira Compacta", desc: "Porta-cartões integrado", price: "R$ 69,90", tag: "carteira" },
-    { file: "12.jpeg", name: "Bolsa Bucket", desc: "Estilo moderno", price: "R$ 189,90", tag: "bolsa" },
-    { file: "13.jpeg", name: "Bolsa com Corrente", desc: "Detalhe dourado", price: "R$ 209,90", tag: "bolsa", badge: "Novo" },
-    { file: "14.jpeg", name: "Bolsa Hobo", desc: "Formato relaxado", price: "R$ 169,90", tag: "bolsa" },
-    { file: "15.jpeg", name: "Bolsa Baguete", desc: "Tendência retrô", price: "R$ 199,90", tag: "bolsa" },
-    { file: "16.jpeg", name: "Mochila Estilosa", desc: "Conforto e estilo", price: "R$ 229,90", tag: "mochila" },
-    { file: "17.jpeg", name: "Bolsa Satchel", desc: "Clássica atemporal", price: "R$ 249,90", tag: "bolsa" },
-    { file: "18.jpeg", name: "Bolsa Wristlet", desc: "Prática e delicada", price: "R$ 99,90", tag: "bolsa" },
-    { file: "19.jpeg", name: "Bolsa Luxo", desc: "Acabamento premium", price: "R$ 289,90", tag: "bolsa", badge: "Exclusivo" }
+    { file: "01.jpeg", name: "Bolsa Transversal Nude", desc: "Design compacto com fecho dourado", price: "R$ 189,90", tag: "bolsa", badge: "Novo" },
+    { file: "02.jpeg", name: "Bolsa Camera com Franja", desc: "Estilo clássico e detalhe em couro", price: "R$ 199,90", tag: "bolsa" },
+    { file: "03.jpeg", name: "Bolsa Perfurada Caramelo", desc: "Textura vazada e metais prateados", price: "R$ 179,90", tag: "bolsa", badge: "Promoção" },
+    { file: "04.png", name: "Bolsa Matelassê Taupe", desc: "Corrente entrelaçada e fecho giratório", price: "R$ 249,90", tag: "bolsa" },
+    { file: "05.jpeg", name: "Bolsa Estruturada Off-White", desc: "Alças contrastantes e pingente exclusivo", price: "R$ 229,90", tag: "bolsa", badge: "Novo" },
+    { file: "06.jpeg", name: "Mochila Mini Nude", desc: "Prática e elegante para o dia a dia", price: "R$ 159,90", tag: "mochila" },
+    { file: "07.jpeg", name: "Bolsa Preta com Detalhe Marrom", desc: "Design marcante com fivela frontal", price: "R$ 219,90", tag: "bolsa" },
+    { file: "08.jpeg", name: "Bolsa Hobo Off-White", desc: "Formato arredondado com zíper frontal", price: "R$ 189,90", tag: "bolsa" },
+    { file: "09.jpeg", name: "Bolsa Hobo Cinza", desc: "Ampla e espaçosa com zíperes laterais", price: "R$ 239,90", tag: "bolsa" },
+    { file: "10.jpeg", name: "Bolsa com Pompom Nude", desc: "Detalhe charmoso e alça ajustável", price: "R$ 149,90", tag: "bolsa" },
+    { file: "11.png", name: "Bolsa Clássica Taupe", desc: "Corrente preta e fecho de pressão", price: "R$ 259,90", tag: "bolsa", badge: "Exclusivo" },
+    { file: "12.jpeg", name: "Bolsa Arredondada Caramelo", desc: "Zíper frontal e alça transversal", price: "R$ 169,90", tag: "bolsa" },
+    { file: "13.jpeg", name: "Bolsa Nylon Preta", desc: "Leve e resistente, ideal para viagens", price: "R$ 129,90", tag: "bolsa" },
+    { file: "14.jpeg", name: "Bolsa Estruturada com Cadeado", desc: "Textura sofisticada e metais dourados", price: "R$ 289,90", tag: "bolsa" },
+    { file: "15.jpeg", name: "Bolsa Oval Nude", desc: "Design moderno com zíper aparente", price: "R$ 179,90", tag: "bolsa" },
+    { file: "16.jpeg", name: "Bolsa Hobo Matelassê", desc: "Padrão geométrico e franja lateral", price: "R$ 219,90", tag: "bolsa" },
+    { file: "17.jpeg", name: "Bolsa Hobo com Rebites", desc: "Detalhes em tachas e franja", price: "R$ 199,90", tag: "bolsa" },
+    { file: "18.jpeg", name: "Bolsa Camera Caramelo", desc: "Com pingente de pompom e pérola", price: "R$ 189,90", tag: "bolsa" },
+    { file: "19.jpeg", name: "Bolsa Clássica Marrom", desc: "Corrente prateada e fecho giratório", price: "R$ 269,90", tag: "bolsa" }
   ];
 
   const grid = document.getElementById("grid");
@@ -530,9 +531,12 @@
 
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  /* ─────────────────────────────────────────────
-     Zoom / Pan state
-  ───────────────────────────────────────────── */
+  document.getElementById("nav-catalogo").addEventListener("click", (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (history.replaceState) history.replaceState(null, "", window.location.pathname);
+  });
+
   const MIN_SCALE = 1;
   const MAX_SCALE = 5;
 
@@ -660,9 +664,6 @@
     }
   });
 
-  /* ─────────────────────────────────────────────
-     Touch gestures (pinch + pan + double-tap)
-  ───────────────────────────────────────────── */
   lightboxImg.addEventListener("touchstart", (e) => {
     e.stopPropagation();
 
@@ -754,9 +755,6 @@
     if (scale < 1) resetZoom(true);
   }, { passive: false });
 
-  /* ─────────────────────────────────────────────
-     Mouse (wheel zoom + drag pan + dblclick)
-  ───────────────────────────────────────────── */
   lightboxImg.addEventListener("wheel", (e) => {
     e.preventDefault();
     const factor = e.deltaY < 0 ? 1.2 : 1 / 1.2;
@@ -809,9 +807,6 @@
     }
   });
 
-  /* ─────────────────────────────────────────────
-     Close handlers
-  ───────────────────────────────────────────── */
   lightbox.addEventListener("click", (e) => {
     const isCloseBtn = e.target.classList.contains("lightbox__close");
     const isBackground = e.target === lightbox;
@@ -826,9 +821,6 @@
     }
   });
 
-  /* ─────────────────────────────────────────────
-     Grid rendering
-  ───────────────────────────────────────────── */
   function render(list) {
     grid.innerHTML = "";
     list.forEach(p => {
