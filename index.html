@@ -276,13 +276,14 @@
   .lightbox {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.88);
     display: none;
     align-items: center;
     justify-content: center;
     z-index: 200;
     padding: clamp(16px, 4vw, 24px);
-    touch-action: manipulation;
+    overflow: hidden;
+    touch-action: none;
   }
 
   .lightbox.open { display: flex; }
@@ -295,9 +296,18 @@
     border-radius: 12px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     object-fit: contain;
+    transform-origin: center center;
+    will-change: transform;
+    cursor: zoom-in;
+    touch-action: none;
     user-select: none;
+    -webkit-user-select: none;
     -webkit-user-drag: none;
+    -webkit-touch-callout: none;
   }
+
+  .lightbox img.is-zoomed { cursor: grab; }
+  .lightbox img.is-grabbing { cursor: grabbing; }
 
   .lightbox__close {
     position: absolute;
@@ -317,6 +327,7 @@
     transition: background 0.2s ease;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+    z-index: 2;
   }
 
   .lightbox__close:hover { background: rgba(255, 255, 255, 0.3); }
@@ -479,7 +490,7 @@
   <p>Atendimento via WhatsApp: (31) 98236-3217</p>
 </footer>
 
-<a class="floating-whats" href="https://wa.me/553182363217" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+<a class="floating-whats" href="https://wa.me/5531982363217" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 
@@ -515,10 +526,309 @@
   const filters = document.getElementById("filters");
   const lightbox = document.getElementById("lightbox");
   const lightboxImg = lightbox.querySelector("img");
-  const whatsNumber = "553182363217";
+  const whatsNumber = "5531982363217";
 
   document.getElementById("year").textContent = new Date().getFullYear();
 
+  /* ─────────────────────────────────────────────
+     Zoom / Pan state
+  ───────────────────────────────────────────── */
+  const MIN_SCALE = 1;
+  const MAX_SCALE = 5;
+
+  let scale = 1;
+  let tx = 0;
+  let ty = 0;
+  let baseW = 0;
+  let baseH = 0;
+
+  let isDragging = false;
+  let panActive = false;
+  let lastDragEndTime = 0;
+  let lastTapTime = 0;
+
+  let pinchStartDist = 0;
+  let pinchStartScale = 1;
+  let pinchStartTx = 0;
+  let pinchStartTy = 0;
+
+  let panStartX = 0, panStartY = 0, panStartTx = 0, panStartTy = 0;
+
+  let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+
+  let mouseDown = false, mouseStartX = 0, mouseStartY = 0, mouseStartTx = 0, mouseStartTy = 0;
+
+  function vpCenter() {
+    return [window.innerWidth / 2, window.innerHeight / 2];
+  }
+
+  function getDist(t1, t2) {
+    return Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+  }
+
+  function getMid(touches) {
+    let x = 0, y = 0;
+    for (const t of touches) { x += t.clientX; y += t.clientY; }
+    return { x: x / touches.length, y: y / touches.length };
+  }
+
+  function applyTransform(animate) {
+    lightboxImg.style.transition = animate ? "transform 0.22s ease-out" : "none";
+    lightboxImg.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+    if (scale > 1.001) {
+      lightboxImg.classList.add("is-zoomed");
+    } else {
+      lightboxImg.classList.remove("is-zoomed");
+    }
+  }
+
+  function clampTranslation() {
+    if (scale <= 1.001) { tx = 0; ty = 0; return; }
+    const maxX = Math.max(0, (baseW * scale - window.innerWidth) / 2);
+    const maxY = Math.max(0, (baseH * scale - window.innerHeight) / 2);
+    tx = Math.max(-maxX, Math.min(maxX, tx));
+    ty = Math.max(-maxY, Math.min(maxY, ty));
+  }
+
+  function zoomAtPoint(newScale, px, py, animate) {
+    newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, newScale));
+    const k = newScale / scale;
+    if (Math.abs(k - 1) < 1e-4) return;
+    const [cx, cy] = vpCenter();
+    const vx = px - cx, vy = py - cy;
+    tx = (1 - k) * vx + k * tx;
+    ty = (1 - k) * vy + k * ty;
+    scale = newScale;
+    clampTranslation();
+    applyTransform(animate);
+  }
+
+  function resetZoom(animate) {
+    scale = 1;
+    tx = 0;
+    ty = 0;
+    applyTransform(animate);
+  }
+
+  function measureBase() {
+    const r = lightboxImg.getBoundingClientRect();
+    if (r.width > 0 && r.height > 0) {
+      baseW = r.width;
+      baseH = r.height;
+    }
+  }
+
+  function openLightbox(src, alt) {
+    scale = 1;
+    tx = 0;
+    ty = 0;
+    isDragging = false;
+    panActive = false;
+    mouseDown = false;
+    lastTapTime = 0;
+    lastDragEndTime = 0;
+    lightboxImg.style.transition = "none";
+    lightboxImg.style.transform = "translate(0px, 0px) scale(1)";
+    lightboxImg.classList.remove("is-zoomed", "is-grabbing");
+
+    lightboxImg.src = src;
+    lightboxImg.alt = alt;
+    lightbox.classList.add("open");
+
+    if (lightboxImg.complete && lightboxImg.naturalWidth) {
+      requestAnimationFrame(() => requestAnimationFrame(measureBase));
+    }
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove("open");
+    scale = 1;
+    tx = 0;
+    ty = 0;
+    isDragging = false;
+    panActive = false;
+    mouseDown = false;
+    lightboxImg.style.transition = "none";
+    lightboxImg.style.transform = "translate(0px, 0px) scale(1)";
+    lightboxImg.classList.remove("is-zoomed", "is-grabbing");
+    lightboxImg.src = "";
+  }
+
+  lightboxImg.addEventListener("load", () => {
+    if (lightbox.classList.contains("open")) {
+      requestAnimationFrame(measureBase);
+    }
+  });
+
+  /* ─────────────────────────────────────────────
+     Touch gestures (pinch + pan + double-tap)
+  ───────────────────────────────────────────── */
+  lightboxImg.addEventListener("touchstart", (e) => {
+    e.stopPropagation();
+
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      isDragging = false;
+      panActive = false;
+      lastTapTime = 0;
+      pinchStartDist = getDist(e.touches[0], e.touches[1]);
+      pinchStartScale = scale;
+      pinchStartTx = tx;
+      pinchStartTy = ty;
+    } else if (e.touches.length === 1) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+      isDragging = false;
+
+      if (scale > 1.001) {
+        panActive = true;
+        panStartX = e.touches[0].clientX;
+        panStartY = e.touches[0].clientY;
+        panStartTx = tx;
+        panStartTy = ty;
+      } else {
+        panActive = false;
+      }
+    }
+  }, { passive: false });
+
+  lightboxImg.addEventListener("touchmove", (e) => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      isDragging = true;
+      const dist = getDist(e.touches[0], e.touches[1]);
+      const mid = getMid(e.touches);
+      let ns = pinchStartScale * (dist / pinchStartDist);
+      ns = Math.min(MAX_SCALE, Math.max(MIN_SCALE, ns));
+      const k = ns / pinchStartScale;
+      const [cx, cy] = vpCenter();
+      tx = (1 - k) * (mid.x - cx) + k * pinchStartTx;
+      ty = (1 - k) * (mid.y - cy) + k * pinchStartTy;
+      scale = ns;
+      clampTranslation();
+      applyTransform(false);
+    } else if (e.touches.length === 1 && panActive) {
+      const dx = e.touches[0].clientX - panStartX;
+      const dy = e.touches[0].clientY - panStartY;
+
+      if (!isDragging && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
+        isDragging = true;
+        lightboxImg.classList.add("is-grabbing");
+      }
+
+      if (isDragging) {
+        e.preventDefault();
+        tx = panStartTx + dx;
+        ty = panStartTy + dy;
+        clampTranslation();
+        applyTransform(false);
+      }
+    }
+  }, { passive: false });
+
+  lightboxImg.addEventListener("touchend", (e) => {
+    if (e.touches.length > 0) return;
+
+    lightboxImg.classList.remove("is-grabbing");
+    const duration = Date.now() - touchStartTime;
+
+    if (!isDragging && duration < 300) {
+      const now = Date.now();
+      if (now - lastTapTime < 300) {
+        if (scale > 1.001) {
+          resetZoom(true);
+        } else {
+          zoomAtPoint(2.5, touchStartX, touchStartY, true);
+        }
+        lastTapTime = 0;
+      } else {
+        lastTapTime = now;
+      }
+    }
+
+    if (isDragging) lastDragEndTime = Date.now();
+    isDragging = false;
+    panActive = false;
+
+    if (scale < 1) resetZoom(true);
+  }, { passive: false });
+
+  /* ─────────────────────────────────────────────
+     Mouse (wheel zoom + drag pan + dblclick)
+  ───────────────────────────────────────────── */
+  lightboxImg.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.2 : 1 / 1.2;
+    zoomAtPoint(scale * factor, e.clientX, e.clientY, false);
+  }, { passive: false });
+
+  lightboxImg.addEventListener("mousedown", (e) => {
+    if (scale <= 1.001) return;
+    e.preventDefault();
+    mouseDown = true;
+    isDragging = false;
+    mouseStartX = e.clientX;
+    mouseStartY = e.clientY;
+    mouseStartTx = tx;
+    mouseStartTy = ty;
+  });
+
+  window.addEventListener("mousemove", (e) => {
+    if (!mouseDown) return;
+    const dx = e.clientX - mouseStartX;
+    const dy = e.clientY - mouseStartY;
+
+    if (!isDragging && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
+      isDragging = true;
+      lightboxImg.classList.add("is-grabbing");
+    }
+
+    if (isDragging) {
+      tx = mouseStartTx + dx;
+      ty = mouseStartTy + dy;
+      clampTranslation();
+      applyTransform(false);
+    }
+  });
+
+  window.addEventListener("mouseup", () => {
+    if (!mouseDown) return;
+    mouseDown = false;
+    lightboxImg.classList.remove("is-grabbing");
+    if (isDragging) lastDragEndTime = Date.now();
+    isDragging = false;
+  });
+
+  lightboxImg.addEventListener("dblclick", (e) => {
+    e.preventDefault();
+    if (scale > 1.001) {
+      resetZoom(true);
+    } else {
+      zoomAtPoint(2.5, e.clientX, e.clientY, true);
+    }
+  });
+
+  /* ─────────────────────────────────────────────
+     Close handlers
+  ───────────────────────────────────────────── */
+  lightbox.addEventListener("click", (e) => {
+    const isCloseBtn = e.target.classList.contains("lightbox__close");
+    const isBackground = e.target === lightbox;
+    if (!isCloseBtn && !isBackground) return;
+    if (!isCloseBtn && Date.now() - lastDragEndTime < 100) return;
+    closeLightbox();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && lightbox.classList.contains("open")) {
+      closeLightbox();
+    }
+  });
+
+  /* ─────────────────────────────────────────────
+     Grid rendering
+  ───────────────────────────────────────────── */
   function render(list) {
     grid.innerHTML = "";
     list.forEach(p => {
@@ -544,9 +854,7 @@
         </div>
       `;
       card.querySelector(".card__image").addEventListener("click", () => {
-        lightboxImg.src = p.file;
-        lightboxImg.alt = p.name;
-        lightbox.classList.add("open");
+        openLightbox(p.file, p.name);
       });
       grid.appendChild(card);
     });
@@ -559,20 +867,6 @@
     btn.classList.add("active");
     const f = btn.dataset.filter;
     render(f === "all" ? products : products.filter(p => p.tag === f));
-  });
-
-  lightbox.addEventListener("click", (e) => {
-    if (e.target === lightbox || e.target.classList.contains("lightbox__close")) {
-      lightbox.classList.remove("open");
-      lightboxImg.src = "";
-    }
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      lightbox.classList.remove("open");
-      lightboxImg.src = "";
-    }
   });
 
   render(products);
