@@ -50,7 +50,7 @@
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    padding: clamp(10px, 2vw, 16px) var(--pad-x);
+    padding: clamp(8px, 1.5vw, 12px) var(--pad-x);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -59,16 +59,28 @@
   }
 
   .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .logo img {
+    height: clamp(42px, 9vw, 56px);
+    width: auto;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .logo-text {
     font-size: clamp(1.15rem, 3.5vw, 1.5rem);
     font-weight: 700;
     color: var(--accent);
     letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    line-height: 1;
+    white-space: nowrap;
   }
-
-  .logo span { font-size: 1.4em; }
 
   nav {
     display: flex;
@@ -404,7 +416,6 @@
     line-height: 1.5;
   }
 
-  /* Correção do layout do botão e preço no detalhe */
   .detail-modal__price-box {
     display: flex;
     flex-direction: column;
@@ -686,7 +697,10 @@
 </head>
 <body id="topo">
 <header>
-  <div class="logo"><span>👗</span> Sirley Modas</div>
+  <div class="logo">
+    <img src="logo.jpg" alt="Logo Sirley Modas" />
+    <span class="logo-text">Sirley Modas</span>
+  </div>
   <nav>
     <a href="#topo" id="nav-catalogo">Catálogo</a>
     <a href="#sobre">Sobre</a>
@@ -834,7 +848,6 @@
         </div>
       `;
       
-      // Click on whole card opens detail modal
       card.addEventListener("click", (e) => {
         if (e.target.closest(".btn-whats")) return;
         openDetailModal(index);
@@ -876,7 +889,6 @@
     const msg = encodeURIComponent(`Olá! Tenho interesse na "${p.name}" (${p.price}).`);
     detailBuyBtn.href = `https://wa.me/${whatsNumber}?text=${msg}`;
 
-    // Reset scroll position of content
     detailContent.scrollTop = 0;
   }
 
@@ -906,13 +918,11 @@
   btnPrev.addEventListener("click", (e) => { e.stopPropagation(); navigateDetail(-1); });
   btnNext.addEventListener("click", (e) => { e.stopPropagation(); navigateDetail(1); });
 
-  // Click image inside detail modal to open zoom
   detailImageWrapper.addEventListener("click", () => {
     const p = currentList[currentIndex];
     if (p) openLightbox(p.file, p.name);
   });
 
-  // Swipe logic for Detail Modal
   let swipeStartX = 0;
   let swipeStartY = 0;
   let isSwiping = false;
@@ -945,7 +955,6 @@
     isSwiping = false;
   }, { passive: true });
 
-  // Mouse Drag logic for Detail Modal
   let isMouseDown = false;
   detailContent.addEventListener("mousedown", (e) => {
     if (e.target.closest("a, button")) return;
