@@ -53,11 +53,6 @@ Bolsa sem alça transversal
 
 “Não acrescente alça transversal. Mostre apenas as alças existentes no produto, mantendo seus encaixes e seu formato original.”
 
-![Morgado Piel. Fabricantes de prendas y accesorios de piel desde 1994, en Campillos, Malaga y Ronda..](https://images.openai.com/static-rsc-4/tx5m69FTL7yMV2dfwM7PjVuWt2kgH8rc2ovEt0swle7cT-w3Iu5sYBaeZk2Zfa9LYoG8ug0ThhMVWlzuh52q03qo2jMvwuDdcrm7cgKYHrreVijosszvU_V0rHfDP2BhBuGZclXTjyFri3mzD7xhkOlj5ZfL2HfZOM0O3mJBFF6WtFarAasEloi5cllzyc8b?purpose=fullsize)
-
-Bolsa mais longa ou arredondada
-
-“Respeite rigorosamente o formato e as proporções da referência. Preserve a bolsa alongada ou arredondada conforme o modelo, sem transformá-la em uma bolsa quadrada ou estilo carteiro.”
 
 ### Dica importante para conseguir um resultado melhor
 
