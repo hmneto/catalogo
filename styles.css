@@ -680,16 +680,17 @@ footer p + p { margin-top: 4px; }
 /* ── Ajustes para o modal de detalhes em dispositivos móveis ── */
 @media (max-width: 767px) {
   .detail-modal {
-    padding-top: max(32px, env(safe-area-inset-top));
-    padding-bottom: max(24px, env(safe-area-inset-bottom));
+    padding-top: max(64px, calc(env(safe-area-inset-top) + 40px));
+    padding-bottom: max(28px, env(safe-area-inset-bottom));
   }
 
   .detail-modal__panel {
-    max-height: calc(100vh - max(32px, env(safe-area-inset-top)) - max(24px, env(safe-area-inset-bottom)) - 16px);
+    max-height: calc(100vh - max(64px, calc(env(safe-area-inset-top) + 40px)) - max(28px, env(safe-area-inset-bottom)) - 16px);
+    border-radius: 20px;
   }
 
   .detail-modal__close {
-    top: max(16px, env(safe-area-inset-top));
+    top: max(18px, calc(env(safe-area-inset-top) + 12px));
   }
 
   .detail-modal__body {
