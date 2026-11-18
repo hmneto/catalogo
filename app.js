@@ -21,6 +21,7 @@ document.getElementById("year").textContent = new Date().getFullYear();
 
 let currentList = [...products];
 let currentIndex = 0;
+let historySyncing = false;
 
 document.getElementById("nav-catalogo").addEventListener("click", (e) => {
   e.preventDefault();
@@ -108,11 +109,16 @@ function openDetailModal(index) {
   updateDetailContent();
   detailModal.classList.add("open");
   document.body.classList.add("modal-open");
+  try { history.pushState({ view: "detail" }, ""); } catch (err) {}
 }
 
-function closeDetailModal() {
+function closeDetailModal(fromHistory) {
   detailModal.classList.remove("open");
   document.body.classList.remove("modal-open");
+  if (!fromHistory && history.state && history.state.view === "detail") {
+    historySyncing = true;
+    try { history.back(); } catch (err) {}
+  }
 }
 
 function navigateDetail(dir) {
@@ -121,9 +127,9 @@ function navigateDetail(dir) {
   updateDetailContent();
 }
 
-document.querySelector(".detail-modal__close").addEventListener("click", closeDetailModal);
+document.querySelector(".detail-modal__close").addEventListener("click", () => closeDetailModal(false));
 detailModal.addEventListener("click", (e) => {
-  if (e.target === detailModal) closeDetailModal();
+  if (e.target === detailModal) closeDetailModal(false);
 });
 
 btnPrev.addEventListener("click", (e) => { e.stopPropagation(); navigateDetail(-1); });
@@ -300,13 +306,14 @@ function openLightbox(src, alt) {
   lightboxImg.src = src;
   lightboxImg.alt = alt;
   lightbox.classList.add("open");
+  try { history.pushState({ view: "lightbox" }, ""); } catch (err) {}
 
   if (lightboxImg.complete && lightboxImg.naturalWidth) {
     requestAnimationFrame(() => requestAnimationFrame(measureBase));
   }
 }
 
-function closeLightbox() {
+function closeLightbox(fromHistory) {
   lightbox.classList.remove("open");
   scale = 1;
   tx = 0;
@@ -318,6 +325,10 @@ function closeLightbox() {
   lightboxImg.style.transform = "translate(0px, 0px) scale(1)";
   lightboxImg.classList.remove("is-zoomed", "is-grabbing");
   lightboxImg.src = "";
+  if (!fromHistory && history.state && history.state.view === "lightbox") {
+    historySyncing = true;
+    try { history.back(); } catch (err) {}
+  }
 }
 
 lightboxImg.addEventListener("load", () => {
@@ -454,13 +465,30 @@ lightbox.addEventListener("click", (e) => {
   const isBackground = e.target === lightbox;
   if (!isCloseBtn && !isBackground) return;
   if (!isCloseBtn && Date.now() - lastDragEndTime < 100) return;
-  closeLightbox();
+  closeLightbox(false);
+});
+
+/* ─────────────────────────────────────────────
+   Back button (History) — fecha zoom, depois detalhes
+───────────────────────────────────────────── */
+window.addEventListener("popstate", () => {
+  if (historySyncing) {
+    historySyncing = false;
+    return;
+  }
+  if (lightbox.classList.contains("open")) {
+    closeLightbox(true);
+    return;
+  }
+  if (detailModal.classList.contains("open")) {
+    closeDetailModal(true);
+  }
 });
 
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
-    if (lightbox.classList.contains("open")) closeLightbox();
-    else if (detailModal.classList.contains("open")) closeDetailModal();
+    if (lightbox.classList.contains("open")) closeLightbox(false);
+    else if (detailModal.classList.contains("open")) closeDetailModal(false);
   }
 });
 
