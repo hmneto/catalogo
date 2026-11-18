@@ -767,13 +767,13 @@
 <script>
   const products = [
     { file: "01.jpeg", name: "Bolsa Transversal Nude", desc: "Design compacto com fecho dourado.", price: "R$ 189,90", tag: "bolsa", badge: "Novo" },
-    { file: "02.jpeg", name: "Bolsa Camera com Franja", desc: "Estilo clássico e detalhe em couro.", price: "R$ 199,90", tag: "bolsa" },
-    { file: "03.jpeg", name: "Bolsa Perfurada Caramelo", desc: "Textura vazada e metais prateados.", price: "R$ 179,90", tag: "bolsa", badge: "Promoção" },
+    { file: "02.png", name: "Bolsa Camera com Franja", desc: "Estilo clássico e detalhe em couro.", price: "R$ 199,90", tag: "bolsa" },
+    { file: "03.png", name: "Bolsa Perfurada Caramelo", desc: "Textura vazada e metais prateados.", price: "R$ 179,90", tag: "bolsa", badge: "Promoção" },
     { file: "04.png", name: "Bolsa Matelassê Taupe", desc: "Corrente entrelaçada e fecho giratório.", price: "R$ 249,90", tag: "bolsa" },
     { file: "05.jpeg", name: "Bolsa Estruturada Off-White", desc: "Alças contrastantes e pingente exclusivo.", price: "R$ 229,90", tag: "bolsa", badge: "Novo" },
     { file: "06.jpeg", name: "Mochila Mini Nude", desc: "Prática e elegante para o dia a dia.", price: "R$ 159,90", tag: "mochila" },
     { file: "07.jpeg", name: "Bolsa Preta com Detalhe Marrom", desc: "Design marcante com fivela frontal.", price: "R$ 219,90", tag: "bolsa" },
-    { file: "08.jpeg", name: "Bolsa Hobo Off-White", desc: "Formato arredondado com zíper frontal.", price: "R$ 189,90", tag: "bolsa" },
+    { file: "08.png", name: "Bolsa Hobo Off-White", desc: "Formato arredondado com zíper frontal.", price: "R$ 189,90", tag: "bolsa" },
     { file: "09.jpeg", name: "Bolsa Hobo Cinza", desc: "Ampla e espaçosa com zíperes laterais.", price: "R$ 239,90", tag: "bolsa" },
     { file: "10.jpeg", name: "Bolsa com Pompom Nude", desc: "Detalhe charmoso e alça ajustável.", price: "R$ 149,90", tag: "bolsa" },
     { file: "11.png", name: "Bolsa Clássica Taupe", desc: "Corrente preta e fecho de pressão.", price: "R$ 259,90", tag: "bolsa", badge: "Exclusivo" },
@@ -783,13 +783,15 @@
     { file: "15.jpeg", name: "Bolsa Oval Nude", desc: "Design moderno com zíper aparente.", price: "R$ 179,90", tag: "bolsa" },
     { file: "16.jpeg", name: "Bolsa Hobo Matelassê", desc: "Padrão geométrico e franja lateral.", price: "R$ 219,90", tag: "bolsa" },
     { file: "17.jpeg", name: "Bolsa Hobo com Rebites", desc: "Detalhes em tachas e franja.", price: "R$ 199,90", tag: "bolsa" },
-    { file: "18.jpeg", name: "Bolsa Camera Caramelo", desc: "Com pingente de pompom e pérola.", price: "R$ 189,90", tag: "bolsa" },
+    { file: "18.png", name: "Bolsa Camera Caramelo", desc: "Com pingente de pompom e pérola.", price: "R$ 189,90", tag: "bolsa" },
     { file: "19.jpeg", name: "Bolsa Clássica Marrom", desc: "Corrente prateada e fecho giratório.", price: "R$ 269,90", tag: "bolsa" },
     { file: "20.jpeg", name: "Bolsa Flap Taupe com Corrente Preta", desc: "Couro texturizado, corrente preta e fecho giratório frontal.", price: "R$ 279,90", tag: "bolsa", badge: "Novo" },
     { file: "21.jpeg", name: "Bolsa Camera Nude com Zíper Frontal", desc: "Formato arredondado, bolso frontal com zíper e alça regulável.", price: "R$ 199,90", tag: "bolsa" },
     { file: "22.jpeg", name: "Bolsa Matelassê Marrom com Corrente", desc: "Padrão chevron, corrente preta e fecho giratório.", price: "R$ 289,90", tag: "bolsa", badge: "Exclusivo" },
     { file: "23.jpeg", name: "Bolsa Trançada Caramelo Ossigomi", desc: "Couro trançado, detalhes dourados e pingente exclusivo.", price: "R$ 259,90", tag: "bolsa" },
-    { file: "24.jpeg", name: "Mochila Mini Preta com Detalhes Dourados", desc: "Alças ajustáveis, bolso frontal e metais dourados.", price: "R$ 219,90", tag: "mochila", badge: "Novo" }
+    { file: "24.jpeg", name: "Mochila Mini Preta com Detalhes Dourados", desc: "Alças ajustáveis, bolso frontal e metais dourados.", price: "R$ 219,90", tag: "mochila", badge: "Novo" },
+    { file: "25.jpeg", name: "Bolsa Estruturada Vertical Nude", desc: "Design elegante com alça de mão, costura vertical e fecho metálico.", price: "R$ 239,90", tag: "bolsa", badge: "Novo" },
+    { file: "26.jpeg", name: "Bolsa Transversal Nude com Zíper", desc: "Modelo compacto com bolso frontal e alça regulável.", price: "R$ 199,90", tag: "bolsa" }
   ];
 
   const grid = document.getElementById("grid");
