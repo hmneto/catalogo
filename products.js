@@ -37,5 +37,13 @@ const products = [
   { file: "36.jpeg", name: "Brinco Argola Dupla Aço Inoxidável", desc: "Argolas duplas texturizadas em aço inoxidável 316L, perfeitas para uso diário.", price: "R$ 49,90", tag: "brinco" },
   { file: "37.jpeg", name: "Kit Brincos Prateados Perfeição", desc: "Conjunto com 3 pares: zircônia redonda, gota lisa e argola trançada.", price: "R$ 69,90", tag: "brinco", badge: "Novo" },
   { file: "38.jpeg", name: "Kit Brincos Prateados Argola e Gota", desc: "Conjunto com argola grossa texturizada e brincos de gota lisa, design sofisticado.", price: "R$ 69,90", tag: "brinco" },
-  { file: "39.jpeg", name: "Kit Brincos Dourados Trançados", desc: "Conjunto com 3 pares: zircônia redonda, argola trançada e argola texturizada com detalhe prateado.", price: "R$ 69,90", tag: "brinco", badge: "Novo" }
+  { file: "39.jpeg", name: "Kit Brincos Dourados Trançados", desc: "Conjunto com 3 pares: zircônia redonda, argola trançada e argola texturizada com detalhe prateado.", price: "R$ 69,90", tag: "brinco", badge: "Novo" },
+  { file: "40.jpeg", name: "Kit Piranhas Flor com Pérola", desc: "Conjunto com 2 piranhas em formato de flor, detalhe central em pérola e acabamento dourado.", price: "R$ 29,90", tag: "piranha", badge: "Novo" },
+  { file: "41.jpeg", name: "Kit Piranhas Retangulares Vazadas", desc: "Conjunto com 4 piranhas retangulares com design vazado, em cores neutras e modernas.", price: "R$ 39,90", tag: "piranha" },
+  { file: "42.jpeg", name: "Kit Piranhas Curvas Minimalistas", desc: "Conjunto com 4 piranhas de formato curvo, ideais para um visual elegante e discreto.", price: "R$ 34,90", tag: "piranha" },
+  { file: "43.jpeg", name: "Kit Piranhas Nó Geométrico", desc: "Conjunto com 5 piranhas de design arredondado e trançado, perfeitas para o dia a dia.", price: "R$ 44,90", tag: "piranha", badge: "Novo" },
+  { file: "44.jpeg", name: "Kit Piranhas Octopus Fosca", desc: "Conjunto com 7 piranhas modelo octopus com acabamento fosco em diversas cores.", price: "R$ 49,90", tag: "piranha" },
+  { file: "45.jpeg", name: "Kit Piranhas Clássicas Quadradas", desc: "Conjunto com 8 piranhas quadradas clássicas em cores variadas.", price: "R$ 39,90", tag: "piranha" },
+  { file: "46.jpeg", name: "Kit Piranhas Estrela", desc: "Conjunto com 8 piranhas em formato de estrela, super divertidas e modernas.", price: "R$ 34,90", tag: "piranha", badge: "Novo" },
+  { file: "47.jpeg", name: "Kit Piranhas Ovais Chatas", desc: "Conjunto com 3 piranhas ovais de perfil baixo, com detalhes em degradê.", price: "R$ 39,90", tag: "piranha" }
 ];
