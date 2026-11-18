@@ -677,6 +677,26 @@ footer p + p { margin-top: 4px; }
   .card__image { aspect-ratio: 4 / 5; }
 }
 
+/* ── Ajustes para o modal em dispositivos móveis ── */
+@media (max-width: 767px) {
+  .detail-modal {
+    padding-top: max(12px, env(safe-area-inset-top));
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  .detail-modal__panel {
+    max-height: calc(100vh - max(12px, env(safe-area-inset-top)) - max(12px, env(safe-area-inset-bottom)) - 12px);
+  }
+
+  .detail-modal__close {
+    top: 16px;
+  }
+
+  .detail-modal__body {
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
